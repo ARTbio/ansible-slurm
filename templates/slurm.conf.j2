@@ -20,7 +20,7 @@ ControlMachine=localhost
 NodeName={{ i.name }}{% for k in i | sort if k != 'name' %} {{ k }}={{ 'YES' if i[k] is sameas true else ('NO' if i[k] is sameas false else i[k]) }}{% endfor %}
 
 {% else %}
-NodeName=localhost State=UNKNOWN
+NodeName=localhost CPUs={{ ansible_processor_nproc }} RealMemory={{ ansible_memtotal_mb }} State=UNKNOWN
 {% endfor %}
 
 # Partitions
@@ -28,5 +28,5 @@ NodeName=localhost State=UNKNOWN
 PartitionName={{ i.name }}{% for k in i | sort if k != 'name' %} {{ k }}={{ 'YES' if i[k] is sameas true else ('NO' if i[k] is sameas false else i[k]) }}{% endfor %}
 
 {% else %}
-PartitionName=debug Default=YES Nodes={{ (slurm_nodes[0] | default({})).name | default('localhost') }} State=UP
+PartitionName=debug Default=YES Nodes={{ (slurm_nodes[0] | default({})).name | default('localhost') }} State=UP DefMemPerCPU= {{ (ansible_memtotal_mb / ansible_processor_nproc) | int }}
 {% endfor %}
